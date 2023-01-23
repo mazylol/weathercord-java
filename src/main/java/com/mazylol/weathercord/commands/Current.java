@@ -2,6 +2,7 @@ package com.mazylol.weathercord.commands;
 
 import com.mazylol.weathercord.call.CurrentWeather;
 import com.mazylol.weathercord.models.current.CurrentRoot;
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
@@ -22,6 +23,16 @@ public class Current extends ListenerAdapter {
 
             try {
                 CurrentRoot weather = CurrentWeather.Get(location, unit);
+
+                String abbv = switch (unit) {
+                    case "metric" -> "°C";
+                    case "imperial" -> "°F";
+                    default -> "K";
+                };
+
+                EmbedBuilder eb = new EmbedBuilder();
+
+                eb.setTitle("Current Weather for " + weather.name);
 
                 event.reply(String.valueOf(weather.main.temp)).queue();
             } catch (IOException | InterruptedException e) {
