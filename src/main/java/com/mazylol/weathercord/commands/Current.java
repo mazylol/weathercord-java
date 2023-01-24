@@ -8,6 +8,7 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
+import java.time.Instant;
 import java.util.Objects;
 
 public class Current extends ListenerAdapter {
@@ -25,17 +26,29 @@ public class Current extends ListenerAdapter {
                 CurrentRoot weather = CurrentWeather.Get(location, unit);
 
                 String abbv = switch (unit) {
-                    case "metric" -> "°C";
-                    case "imperial" -> "°F";
-                    default -> "K";
+                    case "standard" -> " K";
+                    case "imperial" -> " F";
+                    default -> " C";
                 };
 
                 EmbedBuilder eb = new EmbedBuilder();
 
-                eb.setTitle("Current Weather for " + weather.name);
+                eb.setThumbnail("https://openweathermap.org/img/w/" + weather.weather.get(0).icon + ".png");
+                eb.setColor(0x00AE86);
+                eb.setTimestamp(Instant.now());
 
-                event.reply(String.valueOf(weather.main.temp)).queue();
+                eb.setTitle("Current Weather for " + weather.name);
+                eb.setDescription(weather.weather.get(0).description);
+                eb.addField("Temperature", weather.main.temp + abbv, true);
+                eb.addField("High", weather.main.temp_max + abbv, true);
+                eb.addField("Low", weather.main.temp_min + abbv, true);
+                eb.addField("Humidity", weather.main.humidity + "%", true);
+                eb.addField("Pressure", weather.main.pressure + " hPa", true);
+                eb.addField("Wind Speed", weather.wind.speed + " m/s", true);
+
+                event.replyEmbeds(eb.build()).setEphemeral(true).queue();
             } catch (IOException | InterruptedException e) {
+                event.reply("Something went wrong!").queue();
                 throw new RuntimeException(e);
             }
         }
