@@ -10,7 +10,7 @@ import static com.mazylol.weathercord.Bot.weatherApiKey;
 
 public class Geocoder {
     public static String Get(String location) throws IOException, InterruptedException {
-        URI url = URI.create("https://api.openweathermap.org/geo/1.0/direct?q=" + location + "&appid=" + weatherApiKey);
+        URI url = URI.create("https://api.openweathermap.org/geo/1.0/direct?q=" + location.replaceAll("\\s", "") + "&appid=" + weatherApiKey);
 
         HttpRequest getRequest = HttpRequest.newBuilder()
                 .uri(url)

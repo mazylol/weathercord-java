@@ -1,6 +1,7 @@
 package com.mazylol.weathercord;
 
 import com.mazylol.weathercord.commands.Current;
+import com.mazylol.weathercord.commands.Forecast;
 import io.github.cdimascio.dotenv.Dotenv;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
@@ -20,7 +21,7 @@ public class Bot {
 
         JDA jda = JDABuilder.createDefault(dotenv.get("DEVTOKEN"))
                 .setActivity(Activity.playing("no storms?"))
-                .addEventListeners(new Current())
+                .addEventListeners(new Current(), new Forecast())
                 .build().awaitReady();
 
         Guild guild = jda.getGuildById(dotenv.get("GUILD_ID"));
@@ -28,6 +29,14 @@ public class Bot {
         assert guild != null;
         guild.updateCommands().addCommands(
                 Commands.slash("current", "current weather")
+                        .addOptions(
+                                new OptionData(OptionType.STRING, "location", "town, city, address, etc", true),
+                                new OptionData(OptionType.STRING, "units", "units of measure", false)
+                                        .addChoice("metric", "metric")
+                                        .addChoice("kelvin", "standard")
+                                        .addChoice("imperial", "imperial")
+                        ),
+                Commands.slash("forecast", "weather forecast")
                         .addOptions(
                                 new OptionData(OptionType.STRING, "location", "town, city, address, etc", true),
                                 new OptionData(OptionType.STRING, "units", "units of measure", false)

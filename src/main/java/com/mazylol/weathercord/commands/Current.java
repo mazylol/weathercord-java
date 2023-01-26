@@ -15,7 +15,7 @@ public class Current extends ListenerAdapter {
     @Override
     public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event) {
         if (event.getName().equals("current")) {
-            String location = Objects.requireNonNull(event.getOption("location")).getAsString().replaceAll("\\s", "");
+            String location = Objects.requireNonNull(event.getOption("location")).getAsString();
             String unit = "metric";
 
             if (event.getOption("units") != null) {
@@ -25,7 +25,7 @@ public class Current extends ListenerAdapter {
             try {
                 CurrentRoot weather = CurrentWeather.Get(location, unit);
 
-                String abbv = switch (unit) {
+                String abbr = switch (unit) {
                     case "standard" -> " K";
                     case "imperial" -> " F";
                     default -> " C";
@@ -35,9 +35,9 @@ public class Current extends ListenerAdapter {
                         .setTitle("Current Weather for " + weather.name)
                         .setDescription(weather.weather.get(0).description)
                         .setThumbnail("https://openweathermap.org/img/w/" + weather.weather.get(0).icon + ".png")
-                        .addField("Temperature", weather.main.temp + abbv, true)
-                        .addField("High", weather.main.temp_max + abbv, true)
-                        .addField("Low", weather.main.temp_min + abbv, true)
+                        .addField("Temperature", weather.main.temp + abbr, true)
+                        .addField("High", weather.main.temp_max + abbr, true)
+                        .addField("Low", weather.main.temp_min + abbr, true)
                         .addField("Humidity", weather.main.humidity + "%", true)
                         .addField("Pressure", weather.main.pressure + " hPa", true)
                         .addField("Wind Speed", weather.wind.speed + " m/s", true)
